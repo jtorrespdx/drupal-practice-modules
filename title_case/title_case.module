@@ -1,0 +1,65 @@
+<?php
+
+
+function title_case_menu() {
+    $items = array();
+    $items['title case'] = array(
+            'title' => 'Title Case Generator',
+            'page callback' => 'drupal_get_form',
+            'page arguments' => array('title_case_form'),
+            'access callback' => TRUE,
+            'type' => MENU_NORMAL_ITEM,
+    );
+
+    $items['title_case_success_page'] = array(
+            'title' => 'Success',
+            'page callback' => 'title_case_success',
+            'access callback' => TRUE,
+            'type' => MENU_CALLBACK,
+    );
+
+    return $items;
+}
+function title_case_form() {
+    $form['input_title'] = array(
+            '#title' => 'Phrase',
+            '#type' => 'textfield',
+            '#description' => t('Please enter your phrase here.'),
+    );
+
+    $form['submit'] = array(
+        '#type' => 'submit',
+        '#value' => 'Go',
+    );
+
+    return $form;
+}
+
+function title_case_form_submit($form, &$form_state) {
+
+    $phrase = $form_state['values']['input_title'];
+    $title_output = array();
+    $ignore_designated_words = array("about", "above", "across", "after", "against", "along", "among", "around", "as", "at", "before", "behind", "below", "beneath", "beside", "between", "beyond", "but", "by", "down", "during", "for", "from", "inside", "into", "near", "of", "off", "on", "onto", "outside", "over", "past", "since", "the", "than", "through", "to", "toward", "under", "until", "up", "upon", "with", "within", "without");
+    $input_array_of_words = explode(" ", $phrase);
+    $output_titlecased = array();
+
+    foreach ($input_array_of_words as $current_word) {
+        $lower_cased_word = strtolower($current_word);
+        if($lower_cased_word == $input_array_of_words[0]) {
+            array_push($output_titlecased, ucfirst($lower_cased_word));
+        } else {
+            if(in_array($lower_cased_word, $ignore_designated_words)) {
+                array_push($output_titlecased, $lower_cased_word);
+            } else {
+                array_push($output_titlecased, ucfirst($lower_cased_word));
+            }
+        }
+    }
+    $_SESSION['title_output'] = implode(" ", $output_titlecased);
+    $form_state['redirect'] = 'title_case_success_page';
+}
+
+function title_case_success() {
+    $output = $_SESSION['title_output'];
+    return "$output";
+}

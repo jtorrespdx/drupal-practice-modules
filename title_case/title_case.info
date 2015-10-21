@@ -1,0 +1,5 @@
+name = Title Case
+description = Takes a string and converts it to title case.
+package = epicodus examples
+core = 7.x
+files[] = title_case.module
