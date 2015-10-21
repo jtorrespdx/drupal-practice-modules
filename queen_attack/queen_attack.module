@@ -1,0 +1,83 @@
+<?php
+
+function queen_attack_menu() {
+    $items = array();
+    $items['queen_attack'] = array(
+            'title' => 'Queen Attack',
+            'page callback' => 'drupal_get_form',
+            'page arguments' => array('queen_attack_form'),
+            'access callback' => TRUE,
+            'type' => MENU_NORMAL_ITEM,
+    );
+
+    $items['queen_attack_success_page'] = array(
+            'title' => 'Success',
+            'page callback' => 'queen_attack_success',
+            'access callback' => TRUE,
+            'type' => MENU_CALLBACK,
+    );
+    return $items;
+}
+
+function queen_attack_form() {
+    $form['queen_file_position'] = array(
+    '#title' => 'Queen File Location',
+    '#type' => 'select',
+    '#options' => array(1=>'a', 2=>'b', 3=>'c', 4=>'d', 5=>'e', 6=>'f', 7=>'g', 8=>'h'),
+    // '#description' => t('Please enter the queen\'s file (column).'),
+    );
+
+    $form['queen_rank_position'] = array(
+    '#title' => 'Queen Rank Location',
+    '#type' => 'select',
+    '#options' => array(1, 2, 3, 4, 5, 6, 7, 8),
+    // '#description' => t('Please enter the queen\'s rank (row).'),
+    );
+
+    $form['player_file_position'] = array(
+    '#title' => 'Player File Location',
+    '#type' => 'select',
+    '#options' => array(1=>'a', 2=>'b', 3=>'c', 4=>'d', 5=>'e', 6=>'f', 7=>'g', 8=>'h'),
+    // '#description' => t('Please enter the player\'s file (column).'),
+    );
+
+    $form['player_rank_position'] = array(
+    '#title' => 'Player Rank Location',
+    '#type' => 'select',
+    '#options' => array(1, 2, 3, 4, 5, 6, 7, 8),
+    // '#description' => t('Please enter the player\'s rank (row).'),
+    );
+
+    $form['submit'] = array(
+        '#type' => 'submit',
+        '#value' => 'Check',
+    );
+
+    return $form;
+}
+
+function queen_attack_form_submit($form, &$form_state) {
+    $queen_file = $form_state['values']['queen_file_position'];
+    $queen_rank = $form_state['values']['queen_rank_position']+1;
+    $player_file = $form_state['values']['player_file_position'];
+    $player_rank = $form_state['values']['player_rank_position']+1;
+    $file_diff = abs($queen_file - $player_file);
+    $rank_diff = abs($queen_rank - $player_rank);
+    $queen_success = '';
+
+    if ($queen_file == $player_file || $queen_rank == $player_rank) {
+        $queen_success = 'Queen wins.';
+    } elseif ($file_diff == $rank_diff) {
+        $queen_success = 'Queen wins.';
+    } else {
+        $queen_success = 'Queen does not win, yet.';
+    }
+
+    $_SESSION['queen_success_output'] = $queen_success;
+    $form_state['redirect'] = 'queen_attack_success_page';
+}
+
+function queen_attack_success() {
+    $output = $_SESSION['queen_success_output'];
+    return "$output";
+}

@@ -1,0 +1,5 @@
+name = Killer Queen
+description = determines if a chess queen is in position to kill an opponent.
+package = Epicodus Examples
+core = 7.x
+files[] = queen_attack.module
